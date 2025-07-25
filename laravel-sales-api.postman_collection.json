@@ -1,0 +1,157 @@
+{
+  "info": {
+    "_postman_id": "laravel-sales-api-collection",
+    "name": "Laravel Sales API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login Sales",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"sales@email.com\",\n  \"password\": \"password\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/login", "host": ["{{base_url}}"], "path": ["api", "login"] }
+      },
+      "response": []
+    },
+    {
+      "name": "List Toko",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/tokos", "host": ["{{base_url}}"], "path": ["api", "tokos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Detail Toko",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/tokos/:id", "host": ["{{base_url}}"], "path": ["api", "tokos", ":id"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Toko",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "name", "value": "Toko Baru", "type": "text" },
+            { "key": "address", "value": "Jl. Contoh No.1", "type": "text" },
+            { "key": "phone", "value": "08123456789", "type": "text" },
+            { "key": "barcode", "value": "TOKO123456", "type": "text" },
+            { "key": "wilayah_id", "value": "1", "type": "text" },
+            { "key": "latitude", "value": "-6.2000000", "type": "text" },
+            { "key": "longitude", "value": "106.8166667", "type": "text" },
+            { "key": "photo", "type": "file" }
+          ]
+        },
+        "url": { "raw": "{{base_url}}/api/tokos", "host": ["{{base_url}}"], "path": ["api", "tokos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Toko",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "name", "value": "Toko Update", "type": "text" },
+            { "key": "address", "value": "Jl. Update No.2", "type": "text" },
+            { "key": "phone", "value": "08123456789", "type": "text" },
+            { "key": "barcode", "value": "TOKO654321", "type": "text" },
+            { "key": "wilayah_id", "value": "1", "type": "text" },
+            { "key": "latitude", "value": "-6.2100000", "type": "text" },
+            { "key": "longitude", "value": "106.8200000", "type": "text" },
+            { "key": "photo", "type": "file" }
+          ]
+        },
+        "url": { "raw": "{{base_url}}/api/tokos/:id", "host": ["{{base_url}}"], "path": ["api", "tokos", ":id"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Toko",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": { "raw": "{{base_url}}/api/tokos/:id", "host": ["{{base_url}}"], "path": ["api", "tokos", ":id"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Kehadiran Sales (Scan Barcode)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"toko_id\": 1,\n  \"barcode\": \"TOKO123456\",\n  \"visit_date\": \"2024-07-25\",\n  \"notes\": \"Kunjungan pagi\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/kehadiran", "host": ["{{base_url}}"], "path": ["api", "kehadiran"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Transaksi Penjualan Barang",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"toko_id\": 1,\n  \"items\": [\n    { \"barang_id\": 1, \"quantity\": 2, \"price\": 10000 },\n    { \"barang_id\": 2, \"quantity\": 1, \"price\": 20000 }\n  ],\n  \"notes\": \"Penjualan hari ini\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/penjualan", "host": ["{{base_url}}"], "path": ["api", "penjualan"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Laporan Penjualan per Sales",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"from\": \"2024-07-01\",\n  \"to\": \"2024-07-25\",\n  \"toko_ids\": [1,2,3]\n}"
+        },
+        "url": { "raw": "{{base_url}}/api/laporan-penjualan", "host": ["{{base_url}}"], "path": ["api", "laporan-penjualan"] }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost" },
+    { "key": "token", "value": "" }
+  ]
+} 
