@@ -13,14 +13,7 @@ class Sales extends Model
         'name', 'email', 'password', 'phone', 'wilayah_id',
     ];
 
-    protected static function booted()
-    {
-        static::saving(function ($sales) {
-            if ($sales->isDirty('password')) {
-                $sales->password = bcrypt($sales->password);
-            }
-        });
-    }
+    // Removed booted method to prevent double hashing of password
 
     public function wilayah()
     {
