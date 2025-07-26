@@ -5,11 +5,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Sales;
 use App\Models\Toko;
+use App\Models\Wilayah;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SalesVisitHistory;
 use App\Models\SalesTransaction;
 use App\Models\SalesTransactionDetail;
 use App\Models\Barang;
+use Illuminate\Support\Facades\URL;
 
 // Tempatkan endpoint API di bawah ini
 
@@ -34,14 +36,51 @@ Route::post('/login', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    // Get all wilayah (untuk form input toko - selectbox)
+    Route::get('/wilayah', function () {
+        $wilayah = Wilayah::select('id', 'name', 'description')->get();
+        return response()->json($wilayah);
+    });
+
+    // Get all barang (untuk form input transaksi penjualan)
+    Route::get('/barang', function () {
+        $barang = Barang::select('id', 'name', 'code', 'price', 'stock')->get();
+        return response()->json($barang);
+    });
+
+    // Get all toko (untuk form laporan transaksi penjualan - checkbox)
+    Route::get('/toko', function () {
+        $toko = Toko::with('wilayah:id,name')
+            ->select('id', 'name', 'address', 'phone', 'wilayah_id')
+            ->get();
+        return response()->json($toko);
+    });
+
     // List semua toko
     Route::get('/tokos', function () {
-        return Toko::all();
+        $tokos = Toko::all();
+        
+        // Add photo URL with server prefix
+        $tokos->transform(function ($toko) {
+            if ($toko->photo) {
+                $toko->photo = URL::to('storage/' . $toko->photo);
+            }
+            return $toko;
+        });
+        
+        return $tokos;
     });
 
     // Detail toko
     Route::get('/tokos/{id}', function ($id) {
-        return Toko::findOrFail($id);
+        $toko = Toko::findOrFail($id);
+        
+        // Add photo URL with server prefix
+        if ($toko->photo) {
+            $toko->photo = URL::to('storage/' . $toko->photo);
+        }
+        
+        return $toko;
     });
 
     // Create toko

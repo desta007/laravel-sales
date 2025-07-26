@@ -32,6 +32,16 @@ class TokoResource extends Resource
                 Forms\Components\TextInput::make('barcode')
                     ->readOnly()
                     ->default(fn() => uniqid('TKO')),
+                Forms\Components\FileUpload::make('photo')
+                    ->image()
+                    ->imageEditor()
+                    ->imageCropAspectRatio('16:9')
+                    ->imageResizeTargetWidth('1920')
+                    ->imageResizeTargetHeight('1080')
+                    ->directory('toko_photos')
+                    ->visibility('public')
+                    ->maxSize(2048)
+                    ->helperText('Upload foto toko (maksimal 2MB, format: JPG, PNG, GIF)'),
             ]);
     }
 
@@ -44,6 +54,10 @@ class TokoResource extends Resource
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('wilayah.name')->label('Wilayah'),
                 Tables\Columns\TextColumn::make('barcode'),
+                Tables\Columns\ImageColumn::make('photo')
+                    ->label('Foto Toko')
+                    ->circular()
+                    ->size(40),
                 Tables\Columns\ViewColumn::make('barcode_image')->label('Barcode')->view('filament.toko.barcode'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
