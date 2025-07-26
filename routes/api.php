@@ -162,6 +162,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/penjualan', function (Request $request) {
         $data = $request->validate([
             'toko_id' => 'required|exists:tokos,id',
+            'transaction_date' => 'required|date_format:Y-m-d',
             'items' => 'required|array|min:1',
             'items.*.barang_id' => 'required|exists:barangs,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -176,7 +177,7 @@ Route::middleware('auth:sanctum')->group(function () {
         $transaction = SalesTransaction::create([
             'sales_id' => $sales->id,
             'toko_id' => $data['toko_id'],
-            'transaction_date' => now(),
+            'transaction_date' => $data['transaction_date'],
             'total_amount' => $total,
             'notes' => $data['notes'] ?? null,
         ]);
