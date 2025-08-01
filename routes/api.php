@@ -139,16 +139,16 @@ Route::middleware('auth:sanctum')->group(function () {
     // Catat kehadiran sales (scan barcode di toko)
     Route::post('/kehadiran', function (Request $request) {
         $data = $request->validate([
-            'toko_id' => 'required|exists:tokos,id',
             'barcode' => 'required',
             'visit_date' => 'required|date',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'notes' => 'nullable',
         ]);
-        $toko = Toko::findOrFail($data['toko_id']);
-        if ($toko->barcode !== $data['barcode']) {
-            return response()->json(['message' => 'Barcode tidak sesuai dengan toko'], 422);
+        $toko = Toko::findOrFail($data['barcode']);
+        // if ($toko->barcode !== $data['barcode']) {
+        if (!$toko) {
+            return response()->json(['message' => 'Barcode tidak valid'], 422);
         }
         $sales = $request->user();
         $history = SalesVisitHistory::create([
