@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('barcode')->unique();
             $table->foreignId('wilayah_id')->constrained()->onDelete('cascade');
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->string('photo')->nullable();
+            $table->foreignId('sales_id')->constrained('sales')->onDelete('cascade');
             $table->timestamps();
         });
     }

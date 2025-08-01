@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('toko_id')->constrained('tokos')->onDelete('cascade');
             $table->date('visit_date');
             $table->text('notes')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->timestamps();
         });
     }

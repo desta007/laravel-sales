@@ -30,7 +30,7 @@ class SalesResource extends Resource
                     ->required()
                     ->dehydrateStateUsing(fn($state) => $state ? bcrypt($state) : null)
                     ->dehydrated(fn($state) => filled($state)),
-                Forms\Components\TextInput::make('phone'),
+                Forms\Components\TextInput::make('phone')->required(),
                 Forms\Components\Select::make('wilayah_id')
                     ->relationship('wilayah', 'name')
                     ->required(),

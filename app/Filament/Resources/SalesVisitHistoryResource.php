@@ -40,15 +40,33 @@ class SalesVisitHistoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('sales.name')->label('Sales'),
                 Tables\Columns\TextColumn::make('toko.name')->label('Toko'),
+                Tables\Columns\TextColumn::make('toko.address')->label('Alamat Toko'),
+                Tables\Columns\TextColumn::make('toko.phone')->label('Telepon Toko'),
+                Tables\Columns\TextColumn::make('toko.wilayah.name')->label('Wilayah Toko'),
                 Tables\Columns\TextColumn::make('visit_date')->date(),
+                Tables\Columns\TextColumn::make('latitude')
+                    ->label('Latitude')
+                    ->url(fn(SalesVisitHistory $record): ?string => ($record->latitude && $record->longitude)
+                        ? "https://www.google.com/maps/search/?api=1&query={$record->latitude},{$record->longitude}"
+                        : null)
+                    ->openUrlInNewTab(),
+                Tables\Columns\TextColumn::make('longitude')
+                    ->label('Longitude')
+                    ->url(fn(SalesVisitHistory $record): ?string => ($record->latitude && $record->longitude)
+                        ? "https://www.google.com/maps/search/?api=1&query={$record->latitude},{$record->longitude}"
+                        : null)
+                    ->openUrlInNewTab(),
+
                 Tables\Columns\TextColumn::make('notes')->limit(30),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
+            // nonaktifkan click/redirect saat row disorot
+            ->recordUrl(fn(?SalesVisitHistory $record): ?string => null)
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

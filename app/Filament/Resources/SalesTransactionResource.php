@@ -10,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SalesTransactionResource extends Resource
 {
@@ -30,7 +28,14 @@ class SalesTransactionResource extends Resource
                     ->relationship('toko', 'name')
                     ->required(),
                 Forms\Components\DatePicker::make('transaction_date')->required(),
-                Forms\Components\TextInput::make('total_amount')->numeric()->required(),
+
+                Forms\Components\Placeholder::make('total_amount')
+                    ->label('Total Amount')
+                    ->content(fn(?SalesTransaction $record): string => $record
+                        ? 'IDR ' . number_format($record->total_amount, 0, ',', '.')
+                        : 'IDR 0')
+                    ->reactive(),
+
                 Forms\Components\Textarea::make('notes'),
             ]);
     }
@@ -42,7 +47,10 @@ class SalesTransactionResource extends Resource
                 Tables\Columns\TextColumn::make('sales.name')->label('Sales'),
                 Tables\Columns\TextColumn::make('toko.name')->label('Toko'),
                 Tables\Columns\TextColumn::make('transaction_date')->date(),
-                Tables\Columns\TextColumn::make('total_amount')->money('IDR'),
+                // Pakai accessor total_amount, format sebagai mata uang
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->label('Total Amount')
+                    ->formatStateUsing(fn(SalesTransaction $record): string => 'IDR ' . number_format($record->total_amount, 0, ',', '.')),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
             ->filters([

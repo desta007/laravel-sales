@@ -23,6 +23,10 @@ class BarangResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('kategori_barang_id')
+                    ->label('Kategori Barang')
+                    ->relationship('kategoriBarang', 'name')
+                    ->required(),
                 Forms\Components\TextInput::make('name')->required(),
                 Forms\Components\TextInput::make('code')->required(),
                 Forms\Components\TextInput::make('price')->numeric()->required(),
@@ -34,6 +38,9 @@ class BarangResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('kategoriBarang.name')
+                    ->label('Kategori Barang')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('code')->searchable(),
                 Tables\Columns\TextColumn::make('price')->money('IDR'),

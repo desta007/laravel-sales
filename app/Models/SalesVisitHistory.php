@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class SalesVisitHistory extends Model
 {
     protected $fillable = [
-        'sales_id', 'toko_id', 'visit_date', 'notes',
+        'sales_id',
+        'toko_id',
+        'visit_date',
+        'notes',
+        'latitude',
+        'longitude'
     ];
 
     public function sales()

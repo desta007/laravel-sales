@@ -10,7 +10,11 @@ class Sales extends Model
     use HasApiTokens;
 
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'wilayah_id',
+        'name',
+        'email',
+        'password',
+        'phone',
+        'wilayah_id',
     ];
 
     // Removed booted method to prevent double hashing of password
@@ -18,5 +22,10 @@ class Sales extends Model
     public function wilayah()
     {
         return $this->belongsTo(Wilayah::class);
+    }
+
+    public function tokos()
+    {
+        return $this->hasMany(Toko::class);
     }
 }

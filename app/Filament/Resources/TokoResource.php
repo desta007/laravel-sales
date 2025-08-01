@@ -29,9 +29,20 @@ class TokoResource extends Resource
                 Forms\Components\Select::make('wilayah_id')
                     ->relationship('wilayah', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('barcode')
-                    ->readOnly()
-                    ->default(fn() => uniqid('TKO')),
+                Forms\Components\TextInput::make('latitude')
+                    ->numeric()
+                    ->default(0)
+                    ->required(),
+                Forms\Components\TextInput::make('longitude')
+                    ->numeric()
+                    ->default(0)
+                    ->required(),
+                Forms\Components\Select::make('sales_id')
+                    ->relationship('sales', 'name')
+                    ->required(),
+                // Generate barcode automatically
+                Forms\Components\Hidden::make('barcode')
+                    ->default(fn() => \App\Models\Toko::generateBarcode()),
                 Forms\Components\FileUpload::make('photo')
                     ->image()
                     ->imageEditor()
@@ -53,23 +64,36 @@ class TokoResource extends Resource
                 Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('wilayah.name')->label('Wilayah'),
-                Tables\Columns\TextColumn::make('barcode'),
+                // Tables\Columns\TextColumn::make('barcode'),
                 Tables\Columns\ImageColumn::make('photo')
                     ->label('Foto Toko')
                     ->circular()
                     ->size(40),
                 Tables\Columns\ViewColumn::make('barcode_image')->label('Barcode')->view('filament.toko.barcode'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('print_barcode')
+                    ->label('Cetak Barcode')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn(Toko $record): string => route('toko.print-barcode', $record))
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+
+                    Tables\Actions\BulkAction::make('print_barcodes')
+                        ->label('Cetak Barcode Terpilih')
+                        ->action(function (\Illuminate\Support\Collection $records) {
+                            $ids = $records->pluck('id')->join(',');
+                            // redirect ke halaman bulk print
+                            return redirect(route('toko.print-barcodes-bulk', ['ids' => $ids]));
+                        })
+                        ->requiresConfirmation(false),
                 ]),
             ]);
     }

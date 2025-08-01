@@ -59,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // List semua toko
     Route::get('/tokos', function () {
         $tokos = Toko::all();
-        
+
         // Add photo URL with server prefix
         $tokos->transform(function ($toko) {
             if ($toko->photo) {
@@ -67,19 +67,19 @@ Route::middleware('auth:sanctum')->group(function () {
             }
             return $toko;
         });
-        
+
         return $tokos;
     });
 
     // Detail toko
     Route::get('/tokos/{id}', function ($id) {
         $toko = Toko::findOrFail($id);
-        
+
         // Add photo URL with server prefix
         if ($toko->photo) {
             $toko->photo = URL::to('storage/' . $toko->photo);
         }
-        
+
         return $toko;
     });
 
@@ -142,6 +142,8 @@ Route::middleware('auth:sanctum')->group(function () {
             'toko_id' => 'required|exists:tokos,id',
             'barcode' => 'required',
             'visit_date' => 'required|date',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
             'notes' => 'nullable',
         ]);
         $toko = Toko::findOrFail($data['toko_id']);
@@ -153,6 +155,8 @@ Route::middleware('auth:sanctum')->group(function () {
             'sales_id' => $sales->id,
             'toko_id' => $toko->id,
             'visit_date' => $data['visit_date'],
+            'latitude' => $data['latitude'],
+            'longitude' => $data['longitude'],
             'notes' => $data['notes'] ?? null,
         ]);
         return response()->json($history, 201);
