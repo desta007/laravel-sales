@@ -64,6 +64,7 @@ class TokoResource extends Resource
                 Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('wilayah.name')->label('Wilayah'),
+                Tables\Columns\TextColumn::make('sales.name')->label('Sales'),
                 // Tables\Columns\TextColumn::make('barcode'),
                 Tables\Columns\ImageColumn::make('photo')
                     ->label('Foto Toko')
