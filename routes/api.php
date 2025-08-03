@@ -11,6 +11,7 @@ use App\Models\SalesVisitHistory;
 use App\Models\SalesTransaction;
 use App\Models\SalesTransactionDetail;
 use App\Models\Barang;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 
 // Tempatkan endpoint API di bawah ini
@@ -210,5 +211,30 @@ Route::middleware('auth:sanctum')->group(function () {
         }
         $data = $query->orderBy('transaction_date', 'desc')->get();
         return response()->json($data);
+    });
+
+    Route::get('/laporan-penjualan-hari-ini', function (Request $request) {
+        $sales = $request->user();
+        $today = Carbon::now('Asia/Jakarta')->toDateString(); // YYYY-MM-DD sesuai WIB
+
+        $query = SalesTransaction::with(['toko', 'details.barang'])
+            ->where('sales_id', $sales->id)
+            ->whereDate('transaction_date', $today);
+
+        if ($request->filled('toko_ids')) {
+            $query->whereIn('toko_id', (array) $request->query('toko_ids'));
+        }
+
+        $transactions = $query->orderBy('transaction_date', 'desc')->get();
+
+        $totalSalesValue = $transactions->sum(function ($tx) {
+            return $tx->details->sum(function ($detail) {
+                $qty = $detail->quantity ?? 0;
+                $price = $detail->price ?? 0;
+                return $qty * $price;
+            });
+        });
+
+        return response()->json($transactions);
     });
 });

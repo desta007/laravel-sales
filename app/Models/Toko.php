@@ -30,6 +30,11 @@ class Toko extends Model
         return $this->belongsTo(Sales::class);
     }
 
+    public function salesTransactions()
+    {
+        return $this->hasMany(SalesTransaction::class, 'toko_id');
+    }
+
     protected static function booted()
     {
         static::creating(function ($model) {

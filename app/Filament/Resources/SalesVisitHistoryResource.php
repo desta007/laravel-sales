@@ -40,9 +40,6 @@ class SalesVisitHistoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('sales.name')->label('Sales'),
                 Tables\Columns\TextColumn::make('toko.name')->label('Toko'),
-                Tables\Columns\TextColumn::make('toko.address')->label('Alamat Toko'),
-                Tables\Columns\TextColumn::make('toko.phone')->label('Telepon Toko'),
-                Tables\Columns\TextColumn::make('toko.wilayah.name')->label('Wilayah Toko'),
                 Tables\Columns\TextColumn::make('visit_date')->date(),
                 Tables\Columns\TextColumn::make('latitude')
                     ->label('Latitude')

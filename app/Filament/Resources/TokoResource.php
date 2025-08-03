@@ -59,12 +59,17 @@ class TokoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('sales_transactions_sum_total_amount', 'desc') // default urut berdasarkan total penjualan tertinggi
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('phone'),
                 Tables\Columns\TextColumn::make('wilayah.name')->label('Wilayah'),
                 Tables\Columns\TextColumn::make('sales.name')->label('Sales'),
+                Tables\Columns\TextColumn::make('sales_transactions_sum_total_amount') // kolom agregat total penjualan
+                    ->label('Total Penjualan')
+                    ->sortable()
+                    ->formatStateUsing(fn($state) => $state === null ? '0' : number_format($state, 0, ',', '.')),
                 // Tables\Columns\TextColumn::make('barcode'),
                 Tables\Columns\ImageColumn::make('photo')
                     ->label('Foto Toko')
@@ -97,6 +102,13 @@ class TokoResource extends Resource
                         ->requiresConfirmation(false),
                 ]),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withSum('salesTransactions', 'total_amount') // agregasi total penjualan per toko
+            ->orderByDesc('sales_transactions_sum_total_amount');
     }
 
     public static function getRelations(): array
