@@ -27,7 +27,6 @@ class SalesTransactionTokoTertinggi extends BaseWidget
                 Tables\Columns\TextColumn::make('sales.name')->label('Sales'),
                 Tables\Columns\TextColumn::make('sales_transactions_sum_total_amount') // kolom agregat total penjualan
                     ->label('Total Penjualan')
-                    ->sortable()
                     ->formatStateUsing(fn($state) => $state === null ? '0' : number_format($state, 0, ',', '.')),
             ]);
     }
