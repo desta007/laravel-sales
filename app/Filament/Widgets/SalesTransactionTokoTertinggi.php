@@ -22,7 +22,7 @@ class SalesTransactionTokoTertinggi extends BaseWidget
             ->defaultPaginationPageOption(5)
 
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('name')->label('Nama Toko')->searchable(),
                 Tables\Columns\TextColumn::make('wilayah.name')->label('Wilayah'),
                 Tables\Columns\TextColumn::make('sales.name')->label('Sales'),
                 Tables\Columns\TextColumn::make('sales_transactions_sum_total_amount') // kolom agregat total penjualan
