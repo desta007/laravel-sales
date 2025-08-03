@@ -21,7 +21,7 @@ class ListSalesTransactions extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            SalesSummaryWidget::class,
+            // SalesSummaryWidget::class,
         ];
     }
 }
