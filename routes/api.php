@@ -90,7 +90,6 @@ Route::middleware('auth:sanctum')->group(function () {
             'name' => 'required',
             'address' => 'required',
             'phone' => 'nullable',
-            'barcode' => 'required|unique:tokos',
             'wilayah_id' => 'required|exists:wilayahs,id',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -99,6 +98,20 @@ Route::middleware('auth:sanctum')->group(function () {
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('toko_photos', 'public');
         }
+
+        // Generate barcode otomatis
+        $year = now()->format('Y');
+        $month = now()->format('m');
+
+        // Hitung jumlah toko yang sudah dibuat bulan ini
+        $countThisMonth = Toko::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->count() + 1;
+
+        // Format nomor urut jadi tiga digit
+        $barcode = sprintf('%s-%s-%03d', $year, $month, $countThisMonth);
+        $data['barcode'] = $barcode;
+
         $toko = Toko::create($data);
         return response()->json($toko, 201);
     });
@@ -110,7 +123,6 @@ Route::middleware('auth:sanctum')->group(function () {
             'name' => 'sometimes|required',
             'address' => 'sometimes|required',
             'phone' => 'nullable',
-            'barcode' => 'sometimes|required|unique:tokos,barcode,' . $id,
             'wilayah_id' => 'sometimes|required|exists:wilayahs,id',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
