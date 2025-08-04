@@ -49,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json($barang);
     });
 
-    // Get all toko (untuk form laporan transaksi penjualan - checkbox)
+    // Get all toko (untuk form laporan transaksi penjualan - selectbox)
     Route::get('/toko', function () {
         $toko = Toko::with('wilayah:id,name')
             ->select('id', 'name', 'address', 'phone', 'wilayah_id')
@@ -210,6 +210,13 @@ Route::middleware('auth:sanctum')->group(function () {
             $query->whereIn('toko_id', $request->input('toko_ids'));
         }
         $data = $query->orderBy('transaction_date', 'desc')->get();
+
+        // Tambahkan total quantity ke setiap transaksi
+        $data->transform(function ($item) {
+            $item->total_quantity = $item->details->sum('quantity');
+            return $item;
+        });
+
         return response()->json($data);
     });
 
@@ -227,14 +234,32 @@ Route::middleware('auth:sanctum')->group(function () {
 
         $transactions = $query->orderBy('transaction_date', 'desc')->get();
 
-        $totalSalesValue = $transactions->sum(function ($tx) {
-            return $tx->details->sum(function ($detail) {
-                $qty = $detail->quantity ?? 0;
-                $price = $detail->price ?? 0;
-                return $qty * $price;
-            });
+        // Tambahkan total quantity ke setiap transaksi
+        $transactions->transform(function ($item) {
+            $item->total_quantity = $item->details->sum('quantity');
+            return $item;
         });
 
         return response()->json($transactions);
+    });
+
+    Route::get('/sales-transactions/{id}', function ($id, Request $request) {
+        $sales = $request->user();
+
+        $transaction = SalesTransaction::with(['toko', 'details.barang'])
+            ->where('sales_id', $sales->id) // validasi agar hanya ambil transaksi milik user yang login
+            ->where('id', $id)
+            ->first();
+
+        if (!$transaction) {
+            return response()->json([
+                'message' => 'Transaksi tidak ditemukan.'
+            ], 404);
+        }
+
+        // Tambahkan total quantity ke dalam objek
+        $transaction->total_quantity = $transaction->details->sum('quantity');
+
+        return response()->json($transaction);
     });
 });
